@@ -10,7 +10,7 @@ Key technologies used: Python (Pandas),Postgres, AWS (s3), boto3, rest-API, csv.
 1. **Data Extraction:** In data_extraction.py, we create a class named DataExtractor.This class will work as a utility class, in it we will be creating methods that help extract data from different data sources.
 The methods contained will be fit to extract data from a particular data source, these sources will include CSV files, an API and an S3 bucket.
 
-2.**Data Cleaning:**  In data_cleaning.py,this script will contain a class DataCleaning with methods to clean data from each of the data sources.
+2. **Data Cleaning:**  In data_cleaning.py,this script will contain a class DataCleaning with methods to clean data from each of the data sources.
 
 3. **Uploading data:** In database_utils.py, this script will contain a class DatabaseConnector which  will  be used to connect with and upload data to the database, based on the credentials provided in ".yaml" file.
 
@@ -20,15 +20,15 @@ We extract data from various different data sources
 
 1. AWS RDS database: The historical data of users is currently stored in an AWS database in the cloud. The data is extracted, cleaned and strored in the table named "dim_users" on local postgreSQL database.
 
- 2. AWS S3 bucket: The users card details are stored in a PDF document in an AWS S3 bucket.We use the tabula-py Python package, imported with tabula to extract all pages from the pdf document Then return a DataFrame of the extracted data. The data is cleaned and stored in "dim_card_details" table on local database.
+2. AWS S3 bucket: The users card details are stored in a PDF document in an AWS S3 bucket.We use the tabula-py Python package, imported with tabula to extract all pages from the pdf document Then return a DataFrame of the extracted data. The data is cleaned and stored in "dim_card_details" table on local database.
 
- 3.The restful-API:The store data can be retrieved through the use of an API.The API has two GET methods. One will return the number of stores in the business and the other to retrieve a store given a store number.To connect to the API you will need to include the API key to connect to the API in the method header. The ".json" response has to be converted into the pandas dataframe. The data is cleaned and stored in "dim_store_details" table on local database.
+3. The restful-API:The store data can be retrieved through the use of an API.The API has two GET methods. One will return the number of stores in the business and the other to retrieve a store given a store number.To connect to the API you will need to include the API key to connect to the API in the method header. The ".json" response has to be converted into the pandas dataframe. The data is cleaned and stored in "dim_store_details" table on local database.
 
- 4. AWS s3 bucket: The information for each product the company currently sells is stored in CSV format in an S3 bucket on AWS. We use boto3 package to download and extract the information returning a pandas DataFrame.The data is cleaned and stored in "dim_products" table on local database.
+4. AWS s3 bucket: The information for each product the company currently sells is stored in CSV format in an S3 bucket on AWS. We use boto3 package to download and extract the information returning a pandas DataFrame.The data is cleaned and stored in "dim_products" table on local database.
 
- 5.AWS RDS database: This table which acts as the single source of truth for all orders the company has made in the past is stored in a database on AWS RDS.The data is extracted, cleaned and strored in the table named "dim_orders" on local postgreSQL database.
+5. AWS RDS database: This table which acts as the single source of truth for all orders the company has made in the past is stored in a database on AWS RDS.The data is extracted, cleaned and strored in the table named "dim_orders" on local postgreSQL database.
 
- 6.AWS s3 bucket: The final source of data is a JSON file containing the details of when each sale happened, as well as related attributes.The file is currently stored on S3.The data is cleaned and stored in "dim_date_times" table on local database.
+6. AWS s3 bucket: The final source of data is a JSON file containing the details of when each sale happened, as well as related attributes.The file is currently stored on S3.The data is cleaned and stored in "dim_date_times" table on local database.
 
  ## ***Create the database schema**
  Create the star_based schema of the database, ensuring that the columns are of the correct data types. 
