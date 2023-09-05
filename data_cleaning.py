@@ -6,14 +6,19 @@ import numpy as np
 import re
 
 class DataCleaning:
+    ''' This class has methods to clean data from each of the data source of the data source'''
+
     def __init__(self):
         pass
 
     def clean_user_data(self,dfusers):
         #dfusers = dataex.read_rds_table(dbcon)
+        ''' This method cleans table extracted from RDS database'''
 
         dfusers['country_code'] = dfusers['country_code'].astype('string')
-        mapping = {'GGB':'GB','PG8MOC0UZI':'','0CU6LW3NKB':'', 'QVUW9JSKY3':'', 'VSM4IZ4EL3':'', 'VSM4IZ4EL3':'' ,'NTCGYW8LVC':'','RVRFD92E48':'','XKI9UXSCZ1':'', 'QREF9WLI2A':'', 'XPVCZE2L8B':'','44YAIDY048':'', 'FB13AKRI21':'','OS2P9CMHR6':'','5D74J6FPFJ':'','LZGTB0T5Z7':'','IM8MN1L9MJ':''}
+        mapping = {'GGB':'GB'}
+
+        dfusers['country_code'].replace(r'[A-Z0-9]{10}', pd.NA, inplace=True, regex=True)
         # cleaning country code
         dfusers['country_code'] = dfusers['country_code'].replace(mapping)
         dfusers['country_code'] = dfusers['country_code'].replace('', pd.NA)
@@ -31,12 +36,15 @@ class DataCleaning:
         dfusers["date_of_birth"] = pd.to_datetime(dfusers["date_of_birth"], infer_datetime_format=True, errors='coerce') 
         #dfusers.drop('level_0', axis=1, inplace=True)
         #print(dfusers)
+        dfusers['user_uuid'].replace(r'[A-Z0-9]{10}', pd.NA, inplace=True, regex=True)
         return dfusers  
 
     def clean_card_details(self, cards_df):
+        '''This method cleans data extracted from pdf document'''
         cards_df.replace('',pd.NA, inplace=True) 
         cards_df.replace('NULL',pd.NA, inplace=True)
         cards_df['card_provider'].replace(r'[A-Z0-9]{10}', pd.NA, inplace=True,regex=True)
+        cards_df['card_number'] = cards_df['card_number'].replace(r'[^0-9]', '', regex=True)
         cards_df.dropna(how='all',subset=['card_provider'], inplace=True)
         return cards_df
         #no duplicate data found in the file   
@@ -45,6 +53,7 @@ class DataCleaning:
 
 
     def clean_store_data(self, store_df):
+        '''This method cleans data(store data) retrieved through API  and returns dataframe'''
         store_df.replace(r'(<NA>|N/A|NULL)', pd.NA, inplace=True,regex=True)
         store_df['address'].replace(r'\n',',', inplace=True, regex=True)
         store_df.replace(r'^\s*$', pd.NA, regex=True,inplace=True) # replacing blank whitespaces
@@ -91,8 +100,9 @@ class DataCleaning:
 
     
     def convert_product_weights(self, products_df):
+        '''This method is used to clean the weight column from product data and returns dataframe'''
         products_df['weight'] = products_df['weight'].fillna('missing')
-        products_df['weight'].replace(r'\d+ x \d+', 'missing', inplace= True, regex=True)
+        products_df['weight'].replace(r'\d+ x \d+', 'missing', inplace= True, regex=True) #reglar expression to replace 'x' symbols 
 
         products_df['weight'].replace(r'[A-Z0-9]{10}', 'missing', inplace= True, regex=True)
         products_df['weight'].replace(r'77\s\w*', '', inplace= True, regex=True)
@@ -123,6 +133,8 @@ class DataCleaning:
     
 
     def clean_products_data(self, products_df):
+        '''This method cleans product data and returns clean dataframe'''
+        
         products_df['product_price'] = products_df['product_price'].str.replace('£','')
         products_df['product_price'].replace(r'[A-Z0-9]{10}', pd.NA, inplace= True, regex=True)
         duplicate_products = products_df.duplicated(subset=['product_name', 'weight','category','product_code'],keep=False)
@@ -131,7 +143,7 @@ class DataCleaning:
         products_df['category']= products_df['category'].astype('category')
         products_df['removed'].replace(r'[A-Z0-9]{10}', pd.NA, inplace=True, regex=True)
         products_df["date_added"] = pd.to_datetime(products_df["date_added"], errors='coerce') 
-
+        products_df['uuid'].replace(r'[A-Z0-9]{10}', pd.NA, inplace= True, regex=True)
         return products_df
 
 
@@ -165,7 +177,8 @@ class DataCleaning:
 
         dates_df['time_period'].replace(r'[A-Z0-9]{10}', pd.NA, inplace=True, regex=True)
         dates_df.replace('NULL', pd.NA,inplace=True)
-
+        dates_df['date_uuid'].replace(r'[A-Z0-9]{10}', pd.NA, inplace= True, regex=True)
         dates_df.dropna(how = 'all', subset=['timestamp', 'month', 'year', 'day', 'time_period','date_uuid'], inplace=True)
+
 
         return dates_df

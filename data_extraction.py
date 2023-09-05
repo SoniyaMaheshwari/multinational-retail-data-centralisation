@@ -10,33 +10,58 @@ from io import StringIO
 
 
 class DataExtractor:
+    '''This class works as a utility class, it has methods that help extract data from different data sources.
+    The methods extract data from a particular data source, these sources include CSV files, an API and an S3 bucket.'''
+
     def __init__(self):
         pass
 
 
     def read_rds_table(self,engine, tables):
-  
-        #self.tables = dbcon.list_db_tables()
-        #print(self.tables)
-        #engine = dbcon.init_db_engine()
+        '''  This method extracts the table containing user data and return a pandas DataFrame.
+        Args:
+            engine: sqlalchemy database engine
+            tables: name of the table to read from database
+            
+        Returns:
+            dataframe'''
+        
         with engine.execution_options(isolation_level='AUTOCOMMIT').connect() as conn:
             dfusers = pd.read_sql_table(tables,conn)
         return dfusers
         
     #PDF
     def retrieve_pdf_data(self, pdf_name):
+        ''' This method extracts data(card details) from the all pages of the pdf document
+        Args:
+            pdf_name: name of pdf file
+        Returns:
+            dataframe'''
         #tabula returns the list of dataframes, therefore concatenate all the dataframes
         cards_df = pd.concat(tabula.read_pdf(pdf_name,pages='all',multiple_tables=True))
         return cards_df
     
     #API
     def list_number_of_stores(self, endpoint,header):
+        ''' This method extracts the store data through the API
+        Args: 
+            endpoint: URL address to get number of stores
+            header(dictionary) : contains key details
+        Returns
+            number of stores:
+        '''
         response = requests.get(url=endpoint,headers=header)
         data = response.json()
         #print(data)
         return data['number_stores']
     
     def retrieve_stores_data (self,header, num_of_stores):
+        '''This method extracts all the store details using url address and header dictionary
+        Args:
+            header(dictionary): contains key information
+            number_of_stores(int): number of stores whose data need to be extracted
+        Returns:
+            Dataframe'''
         store_df =pd.DataFrame()
         for i in range(0, num_of_stores):
             endpoint = f"https://aqj7u5id95.execute-api.eu-west-1.amazonaws.com/prod/store_details/{i}"
@@ -49,6 +74,14 @@ class DataExtractor:
         return store_df
     
     def extract_from_s3(self,bucket_name, object_key):
+        ''' This method extracts data(product data) stored in csv format from S3 bucket on AWS
+        It uses boto3 package to download
+        Args:
+            bucket_name: name of the  S3 bucket on AWS
+            object_key: name of the file on bucket
+            
+        Returns: 
+            Dataframe'''
         client = boto3.client('s3')
         #path = 's3://data-handling-public/products.csv'
         #products_df = pd.read_csv(path)
@@ -65,6 +98,14 @@ class DataExtractor:
 
 
     def extract_from_s3_datetime(self, bucket_name, object_key):
+        ''' This method extracts data(date-time data) stored in csv format from S3 bucket on AWS
+        It uses boto3 package to download
+        Args:
+            bucket_name: name of the  S3 bucket on AWS
+            object_key: name of the file on bucket
+            
+        Returns: 
+            Dataframe'''
         client = boto3.client('s3')
 
         bucket_name = 'data-handling-public'
