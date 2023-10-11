@@ -6,7 +6,19 @@ from sqlalchemy import inspect
 #from data_extraction import DataExtractor
 
 class DatabaseConnector:
-    '''This class connects and uploads data to database '''
+    '''This class connects and uploads data to database
+    Methods: 
+
+    read_db_creds(self,filename):
+        Retrieves database credentials from the YAML file and returns dictionary of credentials
+    init_db_engine(self, filename):
+        Initialises Postgresql database connection.
+    list_db_tables(self,engine):
+        Gets the table names of a given database.
+    upload_to_db(self,engine,  dataframe, table):
+        Uploads pandas DataFrame to SQL database.
+    
+    '''
     def __init__(self):
         pass
         #self.list_db_tables()
@@ -18,7 +30,6 @@ class DatabaseConnector:
         Returns:
             dictionary'''
         
-    
         self.filename = filename
         with open(self.filename,'r') as f:
             output = yaml.safe_load(f)

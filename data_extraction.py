@@ -11,7 +11,23 @@ from io import StringIO
 
 class DataExtractor:
     '''This class works as a utility class, it has methods that help extract data from different data sources.
-    The methods extract data from a particular data source, these sources include CSV files, an API and an S3 bucket.'''
+    Methods:
+
+    The methods extract data from a particular data source, these sources include CSV files, an API and an S3 bucket.
+    read_rds_table(self, connector, table):
+        Reads SQL table from RDS database and returns table as pandas DataFrame.
+    retrieve_pdf_data(self, pdf_name):
+        Retrieves tabular data from cloud-based .pdf file and returns data as pandas DataFrame.
+    list_number_of_stores(self, endpoint, header):
+        Retrieves number of stores from api endpoint.
+    retrieve_stores_data(self,header, number_of_stores):
+        Iteratively retrieves individual store records and adds them to pandas DataFrame.
+    extract_from_s3(self,bucketname, objectkey):
+        Retrieves data from .json or .csv file stored in AWS S3.
+    extract_from_s3_datetime(self, bucket_name, object_key)
+        Retrieves datetime data stored in csv format from S3 bucket on AWS
+    '''
+    
 
     def __init__(self):
         pass
